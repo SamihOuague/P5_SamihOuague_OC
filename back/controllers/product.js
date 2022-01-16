@@ -59,10 +59,10 @@ exports.orderProducts = (req, res, next) => {
   let queries = [];
   for (let productId of req.body.products) {
     const queryPromise = new Promise((resolve, reject) => {
-      Product.findById(productId).then(
+      Product.findById(productId.id).then(
         (product) => {
           if (!product) {
-            reject('Product not found: ' + productId);
+            reject('Product not found: ' + productId.id);
           }
           product.imageUrl = req.protocol + '://' + req.get('host') + '/images/' + product.imageUrl;
           resolve(product);

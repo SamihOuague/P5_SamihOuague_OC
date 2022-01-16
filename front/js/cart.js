@@ -69,6 +69,49 @@ function resetPrice(nPrice, nQt) {
     totalQuantity.innerText = nQt;
 }
 
+function formValidator(body) {
+    for (let i in body) {
+        if (i === "email") {
+            if (!body[i].match(/^[a-zA-Z0-9]{1,}((\.{1}|[-_]{1,})[a-zA-Z0-9]{1,}){0,}@{1}[a-zA-Z0-9]{1,}((\.{1}|[-_]{1,})[a-zA-Z0-9]{1,}){0,}(\.{1}[a-zA-Z0-9]{2,4})$/)) {
+                return false;
+            }
+        } else {
+            if (!body[i] || body[i] === "") {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+document.getElementsByClassName("cart__order__form")[0].addEventListener("submit", (e) => {
+    const { firstName, lastName, city, address, email } = e.target.elements;
+    const products = JSON.parse(getCookie("cart"));
+    let contact = {
+        firstName: firstName.value,
+        lastName: lastName.value, 
+        city: city.value,
+        address: address.value,
+        email: email.value,
+    }
+    if (formValidator(contact)) {
+        fetch("http://localhost:3000/api/products/order", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({products, contact})
+        }).then((res) => {
+            return res.json();
+        }).then((order) => {
+            if (order.orderId)
+                window.location = "/html/confirmation.html?id=" + order.orderId;
+        });
+    }
+    e.preventDefault();
+});
+
 (async () => {
     await fetch("http://localhost:3000/api/products").then((res) => {
         return res.json();

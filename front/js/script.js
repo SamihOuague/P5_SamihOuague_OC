@@ -25,7 +25,7 @@ function createProduct(id, title, describ, img) {
 fetch("http://localhost:3000/api/products").then((res) => {
     return res.json();
 }).then((value) => {
-    for (i in value) {
+    for (let i in value) {
         const { _id, name, description, imageUrl } = value[i];
         createProduct(_id, name, description, imageUrl);
     }
